@@ -1,9 +1,122 @@
-<html>
+<!--
+FanlinkPro — Full Starter Site
+Features:
+- Email OTP login (simulated, ready for real backend hookup)
+- Admin dashboard access
+- Fans must log in to message
+- Manual payment request (Bitcoin/CashApp/PayPal)
+
+IMPORTANT:
+This is a FRONTEND + SIMPLE BACKEND (Node.js optional) starter.
+To make real email OTP work, you will later connect EmailJS or Firebase.
+--><!DOCTYPE html><html lang="en">
 <head>
-    <title>Fanlink Elite</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FanlinkPro</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #000;
+      color: #fff;
+    }
+    header {
+      background: linear-gradient(90deg, #000, #bfa046);
+      padding: 15px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+    .card {
+      background: #111;
+      border: 1px solid #bfa046;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    button {
+      background: #bfa046;
+      border: none;
+      padding: 10px 18px;
+      color: #000;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: none;
+    }
+    .hidden { display: none; }
+    .admin-box {
+      background: #1a1a1a;
+      border-left: 4px solid gold;
+      padding: 15px;
+      margin-top: 15px;
+    }
+  </style>
 </head>
-<body>
-    <h1>Welcome to Fanlink Elite</h1>
-    <p>This is your landing page.</p>
-</body>
-</html>
+<body><header>FanlinkPro</header><div class="container">  <!-- LOGIN -->  <div class="card" id="loginCard">
+    <h2>Fan Login</h2>
+    <input id="email" placeholder="Enter your email" />
+    <button onclick="sendOTP()">Send OTP</button><div id="otpBox" class="hidden">
+  <input id="otpInput" placeholder="Enter OTP" />
+  <button onclick="verifyOTP()">Verify</button>
+</div>
+
+<p id="loginMsg"></p>
+
+  </div>  <!-- FAN ACTIONS -->  <div class="card hidden" id="fanArea">
+    <h2>Welcome Fan 🎉</h2><h3>Request Payment</h3>
+<textarea id="paymentMsg" placeholder="Tell admin what you want to pay for..."></textarea>
+<button onclick="sendPaymentRequest()">Send Payment Request</button>
+
+<h3>Message Admin</h3>
+<textarea id="fanMessage" placeholder="Send a message..."></textarea>
+<button onclick="sendFanMessage()">Send Message</button>
+
+  </div>  <!-- ADMIN LOGIN -->  <div class="card" id="adminLogin">
+    <h2>Admin Login</h2>
+    <input id="adminEmail" placeholder="Admin email" />
+    <button onclick="adminLogin()">Enter Dashboard</button>
+  </div>  <!-- ADMIN DASHBOARD -->  <div class="card hidden" id="adminPanel">
+    <h2>Admin Dashboard 👑</h2>
+    <div id="adminMessages"></div>
+  </div></div><script>
+  const ADMIN_EMAIL = "joescott0132@gmail.com";
+
+  let generatedOTP = null;
+  let loggedIn = false;
+
+  function sendOTP() {
+    const email = document.getElementById("email").value;
+    if (!email) return alert("Enter email");
+
+    generatedOTP = Math.floor(100000 + Math.random() * 900000);
+
+    document.getElementById("loginMsg").innerText =
+      "OTP sent to email (demo): " + generatedOTP;
+
+    document.getElementById("otpBox").classList.remove("hidden");
+  }
+
+  function verifyOTP() {
+    const otp = document.getElementById("otpInput").value;
+
+    if (otp == generatedOTP) {
+      loggedIn = true;
+      document.getElementById("fanArea").classList.remove("hidden");
+      document.getElementById("loginCard").classList.add("hidden");
+    } else {
+      alert("Wrong OTP");
+   
